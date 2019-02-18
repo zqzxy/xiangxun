@@ -3,7 +3,7 @@
 
     <el-form :model="form" :rules="rules2" ref="loginForm" class="log-form" label-width="80px">
 
-      <el-form-item label="用户名">
+      <el-form-item label="账户">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
 
@@ -11,8 +11,9 @@
         <el-input v-model="form.pass"></el-input>
       </el-form-item>
 
-      <el-button type="primary" @click="sub()">登陆</el-button>
-
+      <el-form-item label=" ">
+        <el-button type="primary" @click="sub()" class="log-btn">登陆</el-button>
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -41,10 +42,14 @@
   .login {
     height: 100%;
     position: relative;
-    /*background-image: url("../../assets/login-bg.jpg");*/
+    background: lightblue;
+    overflow: hidden;
   }
   .log-form{
-    width: 40%;
-    margin: 200px auto;
+    width: 25%;
+    margin: 300px auto;
+  }
+  .log-btn{
+    width: 100%;
   }
 </style>

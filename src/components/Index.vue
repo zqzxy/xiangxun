@@ -27,7 +27,7 @@
         <template slot-scope="scope">
           <el-time-picker
             :disabled="scope.row.canEdit"
-            v-model="scope.row.start"
+            v-model="scope.row.end"
             :picker-options="{selectableRange: '00:00:00 - 23:59:59'}"
             placeholder="任意时间点">
           </el-time-picker>
@@ -86,13 +86,13 @@
     data () {
       return {
         tableData: [
-          {week: '周一', start: new Date(2016, 9, 10, 18, 40), end: '2222',canEdit: true, value1:'', value2:''},
-          {week: '周二', start: new Date(2016, 9, 10, 18, 40), end: '2222',canEdit: true, value1:'', value2:''},
-          {week: '周三', start: new Date(2016, 9, 10, 18, 40), end: '2222',canEdit: true, value1:'', value2:''},
-          {week: '周四', start: new Date(2016, 9, 10, 18, 40), end: '2222',canEdit: true, value1:'', value2:''},
-          {week: '周五', start: new Date(2016, 9, 10, 18, 40), end: '2222',canEdit: true, value1:'', value2:''},
-          {week: '周六', start: new Date(2016, 9, 10, 18, 40), end: '2222',canEdit: true, value1:'', value2:''},
-          {week: '周日', start: new Date(2016, 9, 10, 18, 40), end: '2222',canEdit: true, value1:'', value2:''},
+          {week: '周一', start: new Date(2016, 9, 10, 18, 40), end: new Date(2016, 9, 10, 18, 40),canEdit: true, value1:'', value2:''},
+          {week: '周二', start: new Date(2016, 9, 10, 18, 40), end: new Date(2016, 9, 10, 18, 40),canEdit: true, value1:'', value2:''},
+          {week: '周三', start: new Date(2016, 9, 10, 18, 40), end: new Date(2016, 9, 10, 18, 40),canEdit: true, value1:'', value2:''},
+          {week: '周四', start: new Date(2016, 9, 10, 18, 40), end: new Date(2016, 9, 10, 18, 40),canEdit: true, value1:'', value2:''},
+          {week: '周五', start: new Date(2016, 9, 10, 18, 40), end: new Date(2016, 9, 10, 18, 40),canEdit: true, value1:'', value2:''},
+          {week: '周六', start: new Date(2016, 9, 10, 18, 40), end: new Date(2016, 9, 10, 18, 40),canEdit: true, value1:'', value2:''},
+          {week: '周日', start: new Date(2016, 9, 10, 18, 40), end: new Date(2016, 9, 10, 18, 40),canEdit: true, value1:'', value2:''},
         ],
         options1: [{
           value: '选项1',
