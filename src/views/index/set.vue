@@ -7,31 +7,31 @@
       <div class="time">
         <div class="start">
           <el-time-picker
-            v-model="value2"
+            v-model="s_time"
             placeholder="起始时间">
           </el-time-picker>
         </div>
         <span class="to">至</span>
         <div class="end">
           <el-time-picker
-            v-model="value3"
+            v-model="e_time"
             placeholder="结束时间">
           </el-time-picker>
         </div>
         <div class="sel">
-          <el-radio-group v-model="radio3">
-            <el-radio-button :label="city" v-for="city in cities">{{city}}</el-radio-button>
+          <el-radio-group v-model="s_time">
+            <el-radio-button :label="s_time" v-for="s_time in times">{{s_time}}</el-radio-button>
           </el-radio-group>
         </div>
       </div>
       <div class="period">
         <div class="min">
           <el-time-select
-            v-model="value1"
+            v-model="min"
             :picker-options="{
-              start: '08:30',
-              step: '00:15',
-              end: '18:30'
+              start: '01:00',
+              step: '01:00',
+              end: '59:00'
             }"
             placeholder="间隔时间">
           </el-time-select>
@@ -42,11 +42,11 @@
         </div>
         <div class="sec">
           <el-time-select
-            v-model="value4"
+            v-model="sec"
             :picker-options="{
-              start: '08:30',
-              step: '00:15',
-              end: '18:30'
+              start: '00:01',
+              step: '00:01',
+              end: '00:59'
             }"
             placeholder="持续时间">
           </el-time-select>
@@ -75,14 +75,15 @@
         value2: '',
         value3: '',
         value4: '',
-        radio3: '7:00',
-        cities: ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '0:00', '1:00', '2:00', '3:00', '4:00', '5:00', '6:00'],
+        times: ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '0:00', '1:00', '2:00', '3:00', '4:00', '5:00', '6:00'],
         week: '星期一',
         weeks: ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'],
         mins: ['5', '10', '20', '30', '40', '50', '60', '120', '240', '360', '半天', '一天'],
         secs: ['60', '120', '180', '240', '300', '360', '420', '1小时', '3小时', '6小时', '半天', '一天'],
-        sec: '',
-        min: ''
+        sec: '60',
+        min: '5',
+        s_time: '7:00',
+        e_time: '',
       }
     }
   }
@@ -100,8 +101,8 @@
   }
 
   .title {
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 55px;
+    margin-bottom: 55px;
     font-size: 18px;
   }
 
