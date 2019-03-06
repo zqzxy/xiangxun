@@ -12,7 +12,7 @@
 
 <script>
   export default {
-    name: 'header',
+    name: 'headers',
     data () {
       return {
         img: require('../../assets/title.png'),
@@ -30,7 +30,7 @@
           let h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
           let m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
           let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-          console.log(Y+M+D+h+m+s);
+          //console.log(Y+M+D+h+m+s);
           this.cur_time = Y+M+D+h+m+s
         }
     },

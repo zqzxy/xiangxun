@@ -15,6 +15,7 @@
           <el-time-picker
             v-model="s_time"
             format="HH:mm"
+            @change="sTime()"
             placeholder="起始时间">
           </el-time-picker>
         </div>
@@ -23,21 +24,25 @@
           <el-time-picker
             v-model="e_time"
             format="HH:mm"
+            @change="sTime()"
             placeholder="结束时间">
           </el-time-picker>
         </div>
+        <!--复选框-->
         <div class="sel">
           <el-checkbox-group
-            v-model="check_time"
+            v-model="checked_time"
             :min="0"
-            :max="2">
-            <el-checkbox-button v-for="s_time in times" :label="s_time" :key="s_time">{{s_time}}</el-checkbox-button>
+            :max="2"
+          >
+            <el-checkbox-button v-for="time in times" :label="time" :key="time" @change="test()">{{time}}</el-checkbox-button>
           </el-checkbox-group>
         </div>
       </div>
+      <!--持续时间，间隔时间-->
       <div class="period">
         <div class="min">
-          <el-input v-if="min !== ''" v-model="min" style="width: 90%" @focus="min = ''"></el-input>
+          <el-input v-if="min !== ''" v-model="min" style="width: 97%" @focus="min = ''"></el-input>
           <el-time-picker
             v-else
             v-model="min1"
@@ -51,7 +56,7 @@
           </el-radio-group>
         </div>
         <div class="sec">
-          <el-input v-if="sec !== ''" v-model="sec" style="width: 90%" @focus="sec = ''"></el-input>
+          <el-input v-if="sec !== ''" v-model="sec" style="width: 97%" @focus="sec = ''"></el-input>
 
           <el-time-picker
             v-else
@@ -84,7 +89,7 @@
     name: 'set',
     data () {
       return {
-        times: ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00'],
+        times: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00','07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
         week: '星期一',
         weeks: ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'],
         mins: ['5', '10', '20', '30', '40', '50', '60', '120', '240', '360', '半天', '一天'],
@@ -93,11 +98,36 @@
         sec1: '',
         min: '',
         min1: '',
-        s_time: '',
+        s_time: '07:00',
         e_time: '',
-        check_time: [],
+        checked_time: [],
         radio: '1',
 
+
+      }
+    },
+    methods: {
+        test(){
+          console.log(this.checked_time)
+          let str1 = this.checked_time[0];
+          let arr1 = str1.split(':');
+          console.log(arr1)
+          this.s_time = new Date(2016, 9, 10, arr1[0], arr1[1]);
+
+          let str2 = this.checked_time[1];
+          let arr2 = str2.split(':');
+          console.log(arr2)
+          this.e_time = new Date(2016, 9, 10, arr2[0], arr2[1]);
+
+
+          if(this.s_time > this.e_time){
+            this.$message('结束时间不能小于开始时间');
+          }
+        },
+      sTime(){
+          console.log(this.checked_time)
+          //this.checked_time[0] = '';
+          this.checked_time.shift()
       }
     }
   }
@@ -106,11 +136,12 @@
 <style scoped>
   .con {
     border: solid 1px #3b3b3b;
-    height: 700px;
+    height: auto;
+    overflow: hidden;
     margin-top: 70px;
     color: #714f2a;
     background-color: rgba(59, 59, 59, 0.5);
-    padding: 0 100px;
+    padding: 0 100px 65px;
 
   }
 
@@ -161,7 +192,7 @@
 
   .btn {
     width: 96px;
-    height: 52px;
+    height: 44px;
     border-radius: 0;
     background-color: #151515;
     color: #c49c6e;

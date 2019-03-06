@@ -9,7 +9,7 @@
   background-color: rgba(59,59,59,0.5);
   margin-right: 6px;
   margin-bottom: 6px;
-  width: 63px;
+  width: 62px;
   border: solid 1px #727272;
   border-radius: 5px !important;
 }
@@ -27,7 +27,6 @@
 }
 
 .time .el-checkbox-button.is-focus .el-checkbox-button__inner{
-  border-color: #c49c6e;
 
 }
 .time .el-checkbox-button:first-child .el-checkbox-button__inner, .period .el-radio-button:first-child .el-radio-button__inner{
@@ -35,13 +34,12 @@
 
 }
 .right .el-radio-button__inner{
-  height: 52px;
+  width: 96px;
   background-color: #aa8357;
   border-color: #c49c6e;
   border-radius: 0 !important;
   font-size: 18px;
   color: #714f2a;
-  line-height: 30px;
 }
 .right .el-radio-button__orig-radio:checked+.el-radio-button__inner {
   color: white;
@@ -147,4 +145,16 @@
 }
 .el-popper[x-placement^=bottom] .popper__arrow{
   border-bottom-color: #737373;
+
+}
+.period .el-radio__input.is-checked .el-radio__inner {
+  border-color: #c49c6e;
+  background: #c49c6e;
+}
+
+.period .el-radio__input.is-checked+.el-radio__label {
+  color: #c49c6e;
+}
+.time .el-checkbox-button.is-focus .el-checkbox-button__inner{
+  border-color: #c49c6e;
 }

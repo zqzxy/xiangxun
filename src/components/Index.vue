@@ -2,7 +2,7 @@
   <div class="big-con">
     <el-row>
       <el-col :span="24">
-        <Header></Header>
+        <Headers></Headers>
       </el-col>
     </el-row>
     <el-row>
@@ -17,13 +17,13 @@
 </template>
 
 <script>
-  import Header from '../views/header/header'
+  import Headers from '../views/header/headers'
   import Set from '../views/index/set'
   import Status from '../views/index/status'
   export default {
     name: 'Index',
     components: {
-      Header,
+      Headers,
       Set,
       Status
     },
@@ -45,7 +45,7 @@
   }
   .big-con{
     height: 100%;
-    background-image: url("../assets/bg.jpg");
+    /*background-image: url("../assets/bg.jpg");*/
   }
 
 </style>
