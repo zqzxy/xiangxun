@@ -8,6 +8,7 @@
     </div>
     <div class="turn">
       <el-switch
+        :disabled="flag"
         v-model="value"
         active-color="#c49c6e"
         inactive-color="#151515"
@@ -27,8 +28,12 @@
         img: require('../../assets/turn.png'),
         value: true,
         img1: require('../../assets/on.png'),
-        img2: require('../../assets/off.png')
+        img2: require('../../assets/off.png'),
+        flag: true
       }
+    },
+    mounted(){
+      
     },
     methods: {
       change () {
@@ -80,7 +85,7 @@
   }
 
   .on {
-    width: 40px;
+    width: 8%;
     position: absolute;
     top: 42%;
     left: 46%;

@@ -10,7 +10,28 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/iotcp/*': {
+        target: 'http://192.168.100.82:8080/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/iotcp': '/iotcp'//这里理解成用‘/api’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://http://192.168.100.153:8080/user/add'，直接写‘/api/user/add’即可
+        },
+        onProxyRes:function(proxyRes, req, res) {
+          let cookies = proxyRes.headers['set-cookie'];
+          if (cookies == null || cookies.length == 0) {
+            delete proxyRes.headers['set-cookie'];
+            return
+          }
+          for (var i = 0,n = cookies.length; i < n; i++) {
+            if(cookies[i].match(/^JSESSIONID=[^;]+;[\s\S]*Path=\/[^;]+/)){
+              cookies[i] = cookies[i].replace(/Path=\/[^;]+/,'Path=/');
+            }
+          }
+          proxyRes.headers['set-cookie'] = cookies;
+        },
+      },
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST

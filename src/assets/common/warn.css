@@ -1,0 +1,44 @@
+div.breatheDiv{
+  float: left;
+  height:40px;
+  width:40px;
+  background-color: #FF94A6;
+  border-radius: 100%;
+  webkit-animation: breathe 2000ms ease infinite;
+  -moz-animation: breathe 2000ms ease infinite;
+  -o-animation: breathe 2000ms ease infinite;
+  animation: breathe 2000ms ease infinite;
+}
+@-webkit-keyframes breathe{
+  0% {opacity:.2;box-shadow:0 1px 10px rgba(255,255,255,0.1)}
+  100%{opacity:1;box-shadow:0 1px 40px rgba(255,107,132,0.5)}
+  50%{opacity:1;box-shadow:0 1px 80px #ff6b84}
+}
+@-moz-keyframes breathe{
+  0% {opacity:.2;box-shadow:0 1px 10px rgba(255,255,255,0.1)}
+  100%{opacity:1;box-shadow:0 1px 40px rgba(255,107,132,0.5)}
+  50%{opacity:1;box-shadow:0 1px 80px #ff6b84}
+}
+@-o-keyframes breathe{
+  0% {opacity:.2;box-shadow:0 1px 10px rgba(255,255,255,0.1)}
+  100%{opacity:1;box-shadow:0 1px 40px rgba(255,107,132,0.5)}
+  50%{opacity:1;box-shadow:0 1px 80px #ff6b84}
+}
+@keyframes breathe{
+  0% {opacity:.2;box-shadow:0 1px 10px rgba(255,255,255,0.1)}
+  100%{opacity:1;box-shadow:0 1px 40px rgba(255,107,132,0.5)}
+  50%{opacity:1;box-shadow:0 1px 80px #ff6b84}
+}
+.warn{
+  position: absolute;
+  right: 150px;
+  top: 180px;
+  float: left;
+
+}
+.warn span{
+  color: white;
+  margin-left: 10px;
+  margin-top: 10px;
+  display: inline-block;
+}
