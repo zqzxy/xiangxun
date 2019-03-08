@@ -6,10 +6,10 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col style="width: 30%; margin-left: 6%; margin-right: 4%">
-        <Status></Status>
-      </el-col>
-      <el-col style="width: 54%;">
+      <!--<el-col style="width: 30%; margin-left: 6%; margin-right: 4%">-->
+        <!--<Status></Status>-->
+      <!--</el-col>-->
+      <el-col>
         <Set></Set>
       </el-col>
     </el-row>

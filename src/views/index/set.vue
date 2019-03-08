@@ -1,99 +1,120 @@
 <template>
-  <div class="con">
-    <div class="left">
-      <div class="title">
-        <span class="spans"></span>智能设置
-      </div>
-      <div class="time">
-        <div class="right">
-          <el-radio-group v-model="week" @change="changeWeek()">
-            <el-radio-button :label="week" v-for="week in weeks">{{week}}</el-radio-button>
-          </el-radio-group>
-          <el-button class="btn" @click="set_data()">设置</el-button>
+  <div>
+    <div class="con">
+      <div class="left">
+        <div class="title1">
+          <span class="spans"></span>智能设置
         </div>
-        <div class="start">
-          <el-time-picker
-            v-model="s_time"
-            format="HH:mm"
-            @change="sTime()"
-            placeholder="起始时间">
-          </el-time-picker>
-        </div>
-        <span class="to">至</span>
-        <div class="end">
-          <el-time-picker
-            v-model="e_time"
-            format="HH:mm"
-            @change="sTime()"
-            placeholder="结束时间">
-          </el-time-picker>
-        </div>
-        <!--复选框-->
-        <div class="sel">
-          <el-checkbox-group
-            v-model="checked_time"
-            :min="0"
-            :max="2"
-          >
-            <el-checkbox-button v-for="time in times" :label="time" :key="time" @change="test()">{{time}}
-            </el-checkbox-button>
-          </el-checkbox-group>
-        </div>
-      </div>
-      <!--间隔时间-->
-      <div class="period">
-        <div class="min">
-          <el-input v-if="min !== ''" v-model="min" style="width: 97%" @focus="min = ''"></el-input>
-          <el-time-picker
-            v-else
-            v-model="min1"
-            format="HH:mm"
-            @change="setPeriod"
-            placeholder="间隔时间">
-          </el-time-picker>
-          <span>分钟</span>
-          <el-radio-group v-model="min" class="min-sel" @change="setMin">
-            <el-radio-button :label="min" v-for="min in mins">{{min}}</el-radio-button>
-          </el-radio-group>
-        </div>
-        <!--持续时间-->
-        <div class="sec">
-          <el-input v-if="sec !== ''" v-model="sec" style="width: 97%" @focus="sec = ''"></el-input>
-          <el-time-picker
-            v-else
-            v-model="sec1"
-            format="mm:ss"
-            @change="setLong"
-            placeholder="持续时间">
-          </el-time-picker>
-          <span>秒</span>
-          <el-radio-group v-model="sec" class="sec-sel" @change="set_sec">
-            <el-radio-button :label="sec" v-for="sec in secs">{{sec}}</el-radio-button>
-          </el-radio-group>
-        </div>
-
-        <p style="overflow: hidden; clear: both; float: left">
-          <span class="spans"></span><span style="margin-right: 20px">控制模式</span>
-          <template>
-            <el-radio-group v-model="radio" @change="change()">
-              <el-radio label="0">手动模式</el-radio>
-              <el-radio label="1">自动模式</el-radio>
+        <div class="time">
+          <div class="right">
+            <el-radio-group v-model="week" @change="changeWeek()">
+              <el-radio-button :label="week" v-for="week in weeks">{{week}}</el-radio-button>
             </el-radio-group>
-          </template>
-        </p>
-        <div class="warn" v-if="warn_flag == true">
-          <div class="breatheDiv">
-
+            <el-button class="btn" @click="set_data()">设置</el-button>
           </div>
-          <span>液位过低</span>
+          <div class="start">
+            <el-time-picker
+              v-model="s_time"
+              format="HH:mm"
+              @change="sTime()"
+              placeholder="起始时间">
+            </el-time-picker>
+          </div>
+          <span class="to">至</span>
+          <div class="end">
+            <el-time-picker
+              v-model="e_time"
+              format="HH:mm"
+              @change="sTime()"
+              placeholder="结束时间">
+            </el-time-picker>
+          </div>
+          <!--复选框-->
+          <div class="sel">
+            <el-checkbox-group
+              v-model="checked_time"
+              :min="0"
+              :max="2"
+            >
+              <el-checkbox-button v-for="time in times" :label="time" :key="time" @change="test()">{{time}}
+              </el-checkbox-button>
+            </el-checkbox-group>
+          </div>
         </div>
+        <!--间隔时间-->
+        <div class="period">
+          <div class="min">
+            <el-input v-if="min !== ''" v-model="min" style="width: 97%" @focus="min = ''"></el-input>
+            <el-time-picker
+              v-else
+              v-model="min1"
+              format="HH:mm"
+              @change="setPeriod"
+              placeholder="间隔时间">
+            </el-time-picker>
+            <span>分钟</span>
+            <el-radio-group v-model="min" class="min-sel" @change="setMin">
+              <el-radio-button :label="min" v-for="min in mins">{{min}}</el-radio-button>
+            </el-radio-group>
+          </div>
+          <!--持续时间-->
+          <div class="sec">
+            <el-input v-if="sec !== ''" v-model="sec" style="width: 97%" @focus="sec = ''"></el-input>
+            <el-time-picker
+              v-else
+              v-model="sec1"
+              format="mm:ss"
+              @change="setLong"
+              placeholder="持续时间">
+            </el-time-picker>
+            <span>秒</span>
+            <el-radio-group v-model="sec" class="sec-sel" @change="set_sec">
+              <el-radio-button :label="sec" v-for="sec in secs">{{sec}}</el-radio-button>
+            </el-radio-group>
+          </div>
+
+          <p style="overflow: hidden; clear: both; float: left">
+            <span class="spans"></span><span style="margin-right: 20px">控制模式</span>
+            <template>
+              <el-radio-group v-model="radio" @change="change()">
+                <el-radio label="0">手动模式</el-radio>
+                <el-radio label="1">自动模式</el-radio>
+              </el-radio-group>
+            </template>
+          </p>
+          <div class="warn" v-if="warn_flag == true">
+            <div class="breatheDiv">
+
+            </div>
+            <span>液位过低</span>
+          </div>
 
 
-        <el-button :disabled="clearFlag" round type="info" style="float: right; margin-top: 10px" @click="clear()">清除警报</el-button>
+          <el-button :disabled="clearFlag" round type="info" style="float: right; margin-top: 10px" @click="clear()">清除警报</el-button>
+        </div>
       </div>
     </div>
-
+    <div class="con1">
+      <div class="title"><span></span>开关状态</div>
+      <div class="img">
+        <img :src="img" alt="" class="big-on">
+        <img v-if="value == true" :src="img1" alt="" class="on">
+        <img v-else :src="img2" alt="" class="on">
+      </div>
+      <div class="turn">
+        <el-switch
+          :disabled="flag"
+          v-model="value"
+          active-color="#c49c6e"
+          inactive-color="#151515"
+          active-text="关"
+          inactive-text="开"
+          @change="change2()">
+        </el-switch>
+      </div>
+    </div>
   </div>
+
 </template>
 
 <script>
@@ -103,6 +124,12 @@
     name: 'set',
     data () {
       return {
+        img: require('../../assets/turn.png'),
+        value: false,
+        img1: require('../../assets/on.png'),
+        img2: require('../../assets/off.png'),
+        flag: false,
+
         clearFlag: '',
         times: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
         week: '星期一',
@@ -142,7 +169,7 @@
         totalTurns: 0,//总轮次
         curTurn: 0,//当前轮次,
         information: '',
-        flag: -1,
+
         flagName: '',
         //zq
         outerVisible: false,
@@ -168,7 +195,7 @@
       this.time();
       this.token = Aes.decrypt(localStorage.getItem('token'));
       this.key = Aes.decrypt(localStorage.getItem('key'));
-      console.log(this.token)
+      //console.log(this.token)
     },
     mounted () {
       this.getDevice();
@@ -177,6 +204,17 @@
     },
 
     methods: {
+      change2 () {
+        console.log('开关状态',this.value)
+        let v = this.value == false? '0':'1';
+        let arr = [{'channel':'0', 'value': v}];
+        let date = this.getNowFormatDate();
+        let enReqData = Aes.encrypt('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"66","devID":"' + localStorage.devID + '","array":' + JSON.stringify(arr)+ '}',this.key);
+        //console.log(JSON.parse('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"66","array":' + JSON.stringify(arr)+ '}',this.key));
+        let agentData = '{"notify":{"type":"104","token":"' + this.token + '", "data":"' + enReqData + '","time":"' + date + '"}}';
+        this.readyToSend(agentData);
+      },
+
       getDevice(){
         let _this = this;
         _this.$axios.get('/iotcp/xiangxun/list').then((res) => {
@@ -446,7 +484,12 @@
       //控制模式
       change () {
         console.log(this.radio)
-        localStorage.setItem('mode',this.radio)
+        //localStorage.setItem('mode',this.radio)
+        if(this.radio == 1){
+          this.flag = true;
+        }else if(this.radio == 0){
+          this.flag = false;
+        }
         //websock
         let arr = [{'channel':'0', 'value': this.radio}];
         let date = this.getNowFormatDate();
@@ -564,10 +607,10 @@
         })
       },
       set_sec () {
-        let sec
+        let sec;
         if (this.sec == '半小时') {
           sec = 1800
-        } else if (this.sec == '一小时') {
+        } else if (this.sec == '1小时') {
           sec = 3600
         } else {
           sec = this.sec
@@ -596,7 +639,7 @@
 
       //每隔一定时间发送数据
       time() {
-            console.log(new Date().getSeconds());
+            //console.log(new Date().getSeconds());
         if (!this.loopFlag) return;//false_停止轮询
         else {//正在loading，延迟  递归
           if (this.realtimeLoading && this && !this._isDestroyed) {
@@ -629,7 +672,7 @@
 
       //准备数据发送消息
       threadPoxi() {
-        console.log(this.token)
+        //console.log(this.token)
         let arr = [{'tagName':'0d4738323134373000bc9b2c113d90cd_2_289_XXControlMode_0'},{'tagName':'0d4738323134373000bc9b2c113d90cd_2_290_XXSwitch_0'},{'tagName':'0d4738323134373000bc9b2c113d90cd_2_293_XXAlarm_0'}];
         let date = this.getNowFormatDate();
         let enReqData = Aes.encrypt('{"userID":"' + localStorage.userID + '","array":' + JSON.stringify(arr)+ '}',this.key);
@@ -654,10 +697,10 @@
         try {
           this.websock = new WebSocket(wsuri);
 
-          console.log(this.websock.readyState);
+          //console.log(this.websock.readyState);
         } catch (err) {
 
-          console.log(this.websock.readyState);
+         // console.log(this.websock.readyState);
           console.log(err)
         }
         this.websock.onopen = this.websocketopen;
@@ -703,62 +746,50 @@
       //数据接收
       websocketonmessage(e) {
         console.log('——返回end——', this.getNowFormatDate());
-        console.log(e.data)
+        //console.log(e.data)
 //         const patt1 = new RegExp(/\s+/g);
 //         const patt2 = new RegExp(/[\r\n]/g);
          console.log("返回数据",e.data);
          let redata = JSON.parse(e.data);
-         console.log(redata)
+         //console.log(redata)
         if (typeof (redata.notify.ErrorCode) === 'undefined') {
 
           let deResData = Aes.decrypt(redata.notify.data, this.key); //解密
           console.log(JSON.parse(deResData))
           let arr = JSON.parse(deResData);
-
           let resArr = arr.array;
           resArr.forEach((item)=>{
             if(item.tagName == "0d4738323134373000bc9b2c113d90cd_2_289_XXControlMode_0"){
               this.radio = item.value;
-
-            }if(item.tagName == "0d4738323134373000bc9b2c113d90cd_2_293_XXAlarm_0"){
-              if(item.value == 1){
+              //自动模式 开关禁用
+              //console.log(this.flag)
+              if(item.value == 1){//自动
+                this.flag = true;
+              }else if(item.value == 0){//手动
+                this.flag = false;
+              }
+            }
+            if(item.tagName == "0d4738323134373000bc9b2c113d90cd_2_293_XXAlarm_0"){
+              if(item.value == 1){//警报响起
                 this.warn_flag = true;
-              }else if(item.value == 0){
+              }else if(item.value == 0){//没有警报
                 //清除按钮不能点击
                   this.clearFlag = true;
               }
             }
+
+
+            if(item.tagName == "0d4738323134373000bc9b2c113d90cd_2_290_XXSwitch_0"){
+              //开关
+              if(item.value == 1){//开启
+                this.value = true;
+              }else if(item.value == 0){//关闭
+                this.value = false;
+              }
+
+            }
           })
 
-          //debugger
-          let tempResData = deResData.substr(0, deResData.lastIndexOf('}') + 1);//去空格
-          let varValArr = JSON.parse(tempResData);
-//          console.log('——返回end——',this.getNowFormatDate());
-          this.loadings = new Int8Array(this.varIdArr.length);
-          if (redata.notify.type === '122') {//获取变量值
-
-            this.unifyVariables(varValArr);
-          } else if (redata.notify.type === '105') {//发送指令
-            this.realtimeLoading = false;
-            if (varValArr.array[0].tagName === this.curData[0].tagName && varValArr.array[0].value === this.curData[0].value) {
-              /*this.$message.success('设置成功！');
-              this.valueVisible=false;*/
-              if (this.flag == 0) {
-                this.variableList[this.curIndex].value = varValArr.array[0].value;
-              }
-              this.$message.success('设置成功！');
-              this.$forceUpdate();
-              this.loadings[this.curIndex] = 0;
-              this.information = this.flagName + '：' + (this.flag == 0 ? '发送控制指令成功' : (this.flag == 1 ? '修改变量数值成功' : '发送指令成功'));
-              this.saveAsLog();
-            } else {//设置返回失败，当前操作区loading
-              this.$forceUpdate();
-              this.loadings[this.curIndex] = 1;
-              //this.$message.error('设置失败！正在重新加载！');
-              this.information = this.flagName + '：' + (this.flag == 0 ? '发送控制指令失败' : (this.flag == 1 ? '修改变量数值失败' : '发送指令失败'));
-              this.saveAsLog();
-            }
-          }
         } else {
 
           //token失效，跳转登陆页
@@ -808,11 +839,14 @@
     margin-top: 70px;
     color: #714f2a;
     background-color: rgba(59, 59, 59, 0.5);
-    padding: 0 100px 65px;
+    padding: 0 70px 65px;
+    width: 43%;
+    float: right;
+    margin-right: 5%;
 
   }
 
-  .title {
+  .title1 {
     margin-top: 55px;
     margin-bottom: 45px;
     font-size: 18px;
@@ -895,6 +929,56 @@
     font-size: 14px;
     color: #c49c6e;
     top: 10px;
+  }
+
+  .con1 {
+    border: solid 1px #3b3b3b;
+    height: 700px;
+    margin-top: 70px;
+    color: #714f2a;
+    background-color: rgba(59, 59, 59, 0.5);
+    margin-left: 5%;
+    width: 35%;
+    float: left;
+  }
+
+  .title {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 18px;
+
+  }
+
+  .title span {
+    width: 10px;
+    height: 15px;
+    display: inline-block;
+    background-color: #c49c6e;
+    margin-right: 15px;
+
+  }
+
+  .big-on {
+    width: 45%;
+    margin: 100px auto 0;
+    display: block;
+  }
+
+  .turn div {
+    width: 90px;
+    margin: 20px auto;
+    display: block;
+  }
+
+  .img {
+    position: relative;
+  }
+
+  .on {
+    width: 8%;
+    position: absolute;
+    top: 42%;
+    left: 46%;
   }
 
 </style>

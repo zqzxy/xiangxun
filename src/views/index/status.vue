@@ -72,9 +72,17 @@
     mounted(){
         this.initWebSocket();
 
-        let _this = this;
+        //let _this = this;
         setInterval(function () {
-          _this.initWebSocket();
+          //_this.initWebSocket();
+          console.log(this.flag);
+          if(localStorage.mode == 1){
+            this.flag = true;
+            console.log(this.flag)
+          }else if(localStorage.mode == 0){
+            this.flag = false;
+            console.log(this.flag)
+          }
         },1000)
     },
 
@@ -82,26 +90,23 @@
       this.time();
       this.token = Aes.decrypt(localStorage.getItem('token'));
       this.key = Aes.decrypt(localStorage.getItem('key'));
-      console.log(this.token)
+      //console.log(this.token)
     },
     methods: {
-
       change () {
-        console.log(this.value)
+        console.log('开关状态',this.value)
         let v = this.value == false? '0':'1';
         let arr = [{'channel':'0', 'value': v}];
         let date = this.getNowFormatDate();
         let enReqData = Aes.encrypt('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"66","devID":"' + localStorage.devID + '","array":' + JSON.stringify(arr)+ '}',this.key);
-        console.log(JSON.parse('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"66","array":' + JSON.stringify(arr)+ '}',this.key));
+        //console.log(JSON.parse('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"66","array":' + JSON.stringify(arr)+ '}',this.key));
         let agentData = '{"notify":{"type":"104","token":"' + this.token + '", "data":"' + enReqData + '","time":"' + date + '"}}';
-
         this.readyToSend(agentData);
-
       },
 
       //每隔一定时间发送数据
       time() {
-        console.log(new Date().getSeconds());
+        //console.log(new Date().getSeconds());
         if (!this.loopFlag) return;//false_停止轮询
         else {//正在loading，延迟  递归
           if (this.realtimeLoading && this && !this._isDestroyed) {
@@ -134,7 +139,7 @@
 
       //准备数据发送消息
       threadPoxi() {
-        console.log(this.token)
+        //console.log(this.token)
         let arr = [{'tagName':'0d4738323134373000bc9b2c113d90cd_2_289_XXControlMode_0'},{'tagName':'0d4738323134373000bc9b2c113d90cd_2_290_XXSwitch_0'},{'tagName':'0d4738323134373000bc9b2c113d90cd_2_293_XXAlarm_0'}];
         let date = this.getNowFormatDate();
         let enReqData = Aes.encrypt('{"userID":"' + localStorage.userID + '","array":' + JSON.stringify(arr)+ '}',this.key);
@@ -159,10 +164,10 @@
         try {
           this.websock = new WebSocket(wsuri);
 
-          console.log(this.websock.readyState);
+          //console.log(this.websock.readyState);
         } catch (err) {
 
-          console.log(this.websock.readyState);
+          //console.log(this.websock.readyState);
           console.log(err)
         }
         this.websock.onopen = this.websocketopen;
@@ -207,12 +212,11 @@
 
       //数据接收
       websocketonmessage(e) {
-        console.log('——返回end——', this.getNowFormatDate());
+        console.log('——返回——', this.getNowFormatDate());
         console.log("返回数据",e.data);
         let redata = JSON.parse(e.data);
-        console.log(redata)
+        //console.log(redata)
         if (typeof (redata.notify.ErrorCode) === 'undefined') {
-
           let deResData = Aes.decrypt(redata.notify.data, this.key); //解密
           console.log(JSON.parse(deResData))
           let arr = JSON.parse(deResData);
@@ -220,17 +224,18 @@
           resArr.forEach((item,index)=>{
             if(item.tagName == '0d4738323134373000bc9b2c113d90cd_2_289_XXControlMode_0'){
               //自动模式 开关禁用
-              console.log(this.flag)
-              if(item.value == 1){
+              //console.log(this.flag)
+              if(item.value == 1){//自动
                 this.flag = true;
-              }else if(item.value == 0){
+              }else if(item.value == 0){//手动
                 this.flag = false;
               }
             }
             if(item.tagName == "0d4738323134373000bc9b2c113d90cd_2_290_XXSwitch_0"){
-              if(item.value == 1){
+              //开关
+              if(item.value == 1){//开启
                 this.value = true;
-              }else if(item.value == 0){
+              }else if(item.value == 0){//关闭
                 this.value = false;
               }
 
