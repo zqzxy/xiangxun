@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <el-form :model="form" :rules="rules2" ref="loginForm" class="log-form" label-width="80px">
+    <el-form :model="form" ref="form" class="log-form" label-width="80px">
 
       <el-form-item label="账户">
         <el-input v-model="form.name"></el-input>
@@ -35,13 +35,20 @@
           url: 'iotcp/xiangxun/login',
           params: {loginName: this.form.name,password: this.form.pass}
         }).then((res) => {
-          console.log(res)
+          //console.log(res)
           if(res.data.statusCode == 1001){
             this.$message('登陆成功')
             this.$router.push({name:'Index', path:'/index'});
             localStorage.setItem('key',res.data.result.key);
             localStorage.setItem('token',res.data.result.token);
             localStorage.setItem('loginName',res.data.result.loginName);
+            localStorage.setItem('userID','admin');
+            let str=document.location.protocol;
+            console.log(str);
+            let ws='';
+            if(str.indexOf('https')!=-1){ ws='wss://';}
+            else {ws='ws://';}
+            localStorage.setItem('websocketUrl', ws + res.data.result.websocketIp + ':' + res.data.result.websocketPort)
           }else{
             this.$message('登陆失败')
           }
