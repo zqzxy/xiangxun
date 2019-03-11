@@ -7,14 +7,13 @@
 }
 .time .el-checkbox-button__inner, .period .el-radio-button__inner{
   background-color: rgba(59,59,59,0.5);
-  margin-right: 6px;
   margin-bottom: 6px;
-  width: 62px;
+  width: 90%;
   border: solid 1px #727272;
   border-radius: 5px !important;
 }
 .period .el-radio-button__inner{
-  width: 55px;
+  width: 90%;
 }
 .time .el-checkbox-button__inner:hover, .period .el-radio-button__inner:hover{
   color: white;
@@ -87,13 +86,15 @@
 .el-time-panel__footer{
   display: none;
 }
+
+
 .time .el-input__prefix{
   background-image: url("../time.png");
   width: 16px;
   height: 16px;
   margin-left: -20px;
   margin-top: 12px;
-  left: 360px;
+  left: 100%;
 }
 .time .el-input__icon:after{
   content: '';
@@ -129,7 +130,7 @@
 }
 
 .period .el-radio-button__inner, .time .el-checkbox-button__inner{
-  padding: 12px 10px;
+  padding: 12px 5px;
 }
 
 .el-popper[x-placement^=bottom]{
@@ -159,4 +160,22 @@
   border-color: #c49c6e;
 }
 
-/*.time .el-radio-button{width: 14%}*/
+@media (max-width: 1600px) {
+  .right .el-radio-button__inner{
+    width: 100%;
+    font-size: 14px;
+
+  }
+
+}
+.time .el-checkbox-button, .el-checkbox-button__inner {
+  width: 8%;
+}
+
+.period .el-radio-button, .el-radio-button__inner {
+  width: 16%;
+}
+
+.time .el-radio-button, .el-radio-button__inner {
+  width: 14%;
+}

@@ -7,10 +7,10 @@
         </div>
         <div class="time">
           <div class="right">
-            <el-radio-group v-model="week" @change="changeWeek()">
+            <el-radio-group v-model="week" @change="changeWeek()" style="float: left; width: 82%">
               <el-radio-button :label="week" v-for="week in weeks">{{week}}</el-radio-button>
             </el-radio-group>
-            <el-button class="btn" @click="set_data()">设置</el-button>
+            <el-button class="btn1" @click="set_data()">设置</el-button>
           </div>
           <div class="start">
             <el-time-picker
@@ -44,30 +44,30 @@
         <!--间隔时间-->
         <div class="period">
           <div class="min">
-            <el-input v-if="min !== ''" v-model="min" style="width: 97%" @focus="min = ''"></el-input>
-            <el-time-picker
-              v-else
-              v-model="min1"
-              format="HH:mm"
-              @change="setPeriod"
-              placeholder="间隔时间">
-            </el-time-picker>
-            <span>分钟</span>
+            <el-input v-model="min" @change="setPeriod" placeholder="间隔时间"></el-input>
+            <!--<el-time-picker-->
+            <!--v-else-->
+            <!--v-model="min1"-->
+            <!--format="HH:mm"-->
+            <!--@change="setPeriod"-->
+            <!--placeholder="间隔时间">-->
+            <!--</el-time-picker>-->
+            <span>分钟（间隔时间)</span>
             <el-radio-group v-model="min" class="min-sel" @change="setMin">
               <el-radio-button :label="min" v-for="min in mins">{{min}}</el-radio-button>
             </el-radio-group>
           </div>
           <!--持续时间-->
           <div class="sec">
-            <el-input v-if="sec !== ''" v-model="sec" style="width: 97%" @focus="sec = ''"></el-input>
-            <el-time-picker
-              v-else
-              v-model="sec1"
-              format="mm:ss"
-              @change="setLong"
-              placeholder="持续时间">
-            </el-time-picker>
-            <span>秒</span>
+            <el-input v-model="sec" @change="getChi()" placeholder="持续时间"></el-input>
+            <!--<el-time-picker-->
+            <!--v-else-->
+            <!--v-model="sec1"-->
+            <!--format="mm:ss"-->
+            <!--@change="setLong"-->
+            <!--placeholder="持续时间">-->
+            <!--</el-time-picker>-->
+            <span>秒（持续时间）</span>
             <el-radio-group v-model="sec" class="sec-sel" @change="set_sec">
               <el-radio-button :label="sec" v-for="sec in secs">{{sec}}</el-radio-button>
             </el-radio-group>
@@ -90,10 +90,13 @@
           </div>
 
 
-          <el-button :disabled="clearFlag" round type="info" style="float: right; margin-top: 10px" @click="clear()">清除警报</el-button>
+          <el-button :disabled="clearFlag" round type="info" style="float: right; margin-top: 10px" @click="clear()">
+            清除警报
+          </el-button>
         </div>
       </div>
     </div>
+
     <div class="con1">
       <div class="title"><span></span>开关状态</div>
       <div class="img">
@@ -114,12 +117,12 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
   import Aes from '@/utils/aes.js'
   import {mixin} from '@/utils/mixin.js'
+
   export default {
     name: 'set',
     data () {
@@ -158,9 +161,9 @@
         loadings: [],//可控按钮或数值loading
         loopFlag: true,//轮询，true，继续轮询，false，停止轮询
         websock: null,
-        userID: "",//用户id
-        token: "",//token
-        key: "",
+        userID: '',//用户id
+        token: '',//token
+        key: '',
         arr1: [],//变量列表
         varIdArr: [],//变量Id  列表
         variableList: [],//最终数据表
@@ -191,42 +194,79 @@
         addFav: [],
       }
     },
-    created(){
-      this.time();
-      this.token = Aes.decrypt(localStorage.getItem('token'));
-      this.key = Aes.decrypt(localStorage.getItem('key'));
+    created () {
+      this.time()
+      this.token = Aes.decrypt(localStorage.getItem('token'))
+      this.key = Aes.decrypt(localStorage.getItem('key'))
       //console.log(this.token)
     },
     mounted () {
       this.getDevice();
-
-
     },
 
     methods: {
-      change2 () {
-        console.log('开关状态',this.value)
-        let v = this.value == false? '0':'1';
-        let arr = [{'channel':'0', 'value': v}];
-        let date = this.getNowFormatDate();
-        let enReqData = Aes.encrypt('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"66","devID":"' + localStorage.devID + '","array":' + JSON.stringify(arr)+ '}',this.key);
-        //console.log(JSON.parse('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"66","array":' + JSON.stringify(arr)+ '}',this.key));
-        let agentData = '{"notify":{"type":"104","token":"' + this.token + '", "data":"' + enReqData + '","time":"' + date + '"}}';
-        this.readyToSend(agentData);
+      //设置持续时间
+      getChi () {
+        console.log(this.sec)
+        let reg = '^[0-9]*[1-9][0-9]*$'
+        if (this.sec.match(reg)) {
+          if (this.sec !== '') {
+            if (this.sec < 1 || this.sec > 3600) {
+              this.$message('持续时间范围为0到3600秒！')
+            } else {
+              this.$axios({
+                method: 'get',
+                url: 'iotcp/xiangxun/set',
+                params: {
+                  type: '1',
+                  value: this.sec,
+                  devID: this.devID,
+                  key: localStorage.getItem('key'),
+                  token: localStorage.getItem('token'),
+                  loginName: localStorage.getItem('loginName'),
+                }
+              }).then((res) => {
+                if (res.data.statusCode == 1001) {
+                  this.$message('设置成功')
+                } else {
+                  this.$message('设置失败')
+                }
+              })
+            }
+          } else {
+            this.$message('请输入持续时间！')
+          }
+        } else {
+          this.sec = ''
+          this.$message('请输入正整数！')
+        }
+
       },
 
-      getDevice(){
-        let _this = this;
+      change2 () {
+        console.log('开关状态', this.value)
+        let v = this.value == false ? '0' : '1'
+        let arr = [{'channel': '0', 'value': v}]
+        let date = this.getNowFormatDate()
+        let enReqData = Aes.encrypt('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"66","devID":"' + localStorage.devID + '","array":' + JSON.stringify(arr) + '}', this.key)
+        //console.log(JSON.parse('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"66","array":' + JSON.stringify(arr)+ '}',this.key));
+        let agentData = '{"notify":{"type":"104","token":"' + this.token + '", "data":"' + enReqData + '","time":"' + date + '"}}'
+        this.readyToSend(agentData)
+      },
+
+      getDevice () {
+        let _this = this
         _this.$axios.get('/iotcp/xiangxun/list').then((res) => {
           //console.log(res)
-          _this.devID = res.data.result[0].devID;
-          localStorage.setItem('devID',res.data.result[0].devID)
+          _this.devID = res.data.result[0].devID
+          localStorage.setItem('devID', res.data.result[0].devID)
           //console.log(_this.devID)
-          _this.initWebSocket();
+          _this.initWebSocket()
           _this.initTime()
         })
       },
-      initTime(){
+
+      initTime () {
         this.$axios({
           method: 'get',
           url: 'iotcp/xiangxun/overview',
@@ -234,45 +274,42 @@
             devID: this.devID,
           }
         }).then((res) => {
-
           let data = res.data.result
-          this.radio = data.controlModel;//模式
-          this.min = data.intervalTime;//间隔时间 分钟
-          this.sec = data.periodTime;//持续时间 秒
-
+          this.radio = data.controlModel//模式
+          this.min = data.intervalTime//间隔时间 分钟
+          this.sec = data.periodTime//持续时间 秒
           //week
-          let week_day = data.list;
-          week_day.forEach((v,i) => {
+          let week_day = data.list
+          week_day.forEach((v, i) => {
             switch (v.weekDay) {
               case '1':
-                this.mon.push(v.array[0]);
-                break;
+                this.mon.push(v.array[0])
+                break
               case '2':
-                this.tue.push(v.array[0]);
-                break;
+                this.tue.push(v.array[0])
+                break
               case '3':
-                this.wed.push(v.array[0]);
-                break;
+                this.wed.push(v.array[0])
+                break
               case '4':
-                this.thu.push(v.array[0]);
-                break;
+                this.thu.push(v.array[0])
+                break
               case '5':
-                this.fri.push(v.array[0]);
-                break;
+                this.fri.push(v.array[0])
+                break
               case '6':
-                this.sat.push(v.array[0]);
-                break;
+                this.sat.push(v.array[0])
+                break
               case '7':
-                this.sun.push(v.array[0]);
-                break;
+                this.sun.push(v.array[0])
+                break
 
             }
           })
-
           this.get_week()//當前星期
         })
       },
-      resetWeek(){
+      resetWeek () {
 
         this.$axios({
           method: 'get',
@@ -283,81 +320,80 @@
         }).then((res) => {
           let data = res.data.result
           //week
-          let week_day = data.list;
-          week_day.forEach((v,i) => {
+          let week_day = data.list
+          week_day.forEach((v, i) => {
             switch (v.weekDay) {
               case '1':
-                this.mon = [];
-                this.mon.push(v.array[0]);
+                this.mon = []
+                this.mon.push(v.array[0])
                 console.log(this.mon)
-                break;
+                break
               case '2':
-                this.tue = [];
-                this.tue.push(v.array[0]);
-                break;
+                this.tue = []
+                this.tue.push(v.array[0])
+                break
               case '3':
-                this.wed = [];
-                this.wed.push(v.array[0]);
-                break;
+                this.wed = []
+                this.wed.push(v.array[0])
+                break
               case '4':
-                this.thu = [];
-                this.thu.push(v.array[0]);
-                break;
+                this.thu = []
+                this.thu.push(v.array[0])
+                break
               case '5':
-                this.fri = [];
-                this.fri.push(v.array[0]);
-                break;
+                this.fri = []
+                this.fri.push(v.array[0])
+                break
               case '6':
-                this.sat = [];
-                this.sat.push(v.array[0]);
-                break;
+                this.sat = []
+                this.sat.push(v.array[0])
+                break
               case '7':
-                this.sun = [];
-                this.sun.push(v.array[0]);
-                break;
+                this.sun = []
+                this.sun.push(v.array[0])
+                break
 
             }
           })
         })
       },
-      myTime(str1,str2){
-        let arr1 = str1.split(':');
-        this.s_time = new Date(2016, 9, 10, arr1[0], arr1[1]);
-        let arr2 = str2.split(':');
-        this.e_time = new Date(2016, 9, 10, arr2[0], arr2[1]);
+      myTime (str1, str2) {
+        let arr1 = str1.split(':')
+        this.s_time = new Date(2016, 9, 10, arr1[0], arr1[1])
+        let arr2 = str2.split(':')
+        this.e_time = new Date(2016, 9, 10, arr2[0], arr2[1])
       },
-      changeWeek(){
-        this.resetWeek();
+      changeWeek () {
+        this.resetWeek()
 
-        this.checked_time = [];
+        this.checked_time = []
         console.log(this.week)
         switch (this.week) {
           case '星期一':
 
-            this.myTime(this.mon[0].startTime,this.mon[0].endTime)
-            break;
+            this.myTime(this.mon[0].startTime, this.mon[0].endTime)
+            break
           case '星期二':
-            this.myTime(this.tue[0].startTime,this.tue[0].endTime)
-            break;
+            this.myTime(this.tue[0].startTime, this.tue[0].endTime)
+            break
           case '星期三':
-            this.myTime(this.wed[0].startTime,this.wed[0].endTime)
-            break;
+            this.myTime(this.wed[0].startTime, this.wed[0].endTime)
+            break
           case '星期四':
-            this.myTime(this.thu[0].startTime,this.thu[0].endTime)
-            break;
+            this.myTime(this.thu[0].startTime, this.thu[0].endTime)
+            break
           case '星期五':
-            this.myTime(this.fri[0].startTime,this.fri[0].endTime)
-            break;
+            this.myTime(this.fri[0].startTime, this.fri[0].endTime)
+            break
           case '星期六':
-            this.myTime(this.sat[0].startTime,this.sat[0].endTime)
-            break;
+            this.myTime(this.sat[0].startTime, this.sat[0].endTime)
+            break
           case '星期日':
-            this.myTime(this.sun[0].startTime,this.sun[0].endTime)
-            break;
-
+            this.myTime(this.sun[0].startTime, this.sun[0].endTime)
+            break
 
         }
-        console.log(this.s_time,this.e_time)
+        console.log(this.s_time, this.e_time)
       },
 
       get_week () {
@@ -365,25 +401,25 @@
         let week = new Date().getDay()
         if (week == 0) {
           str = '星期日'
-          this.myTime(this.sun[0].startTime,this.sun[0].endTime)
+          this.myTime(this.sun[0].startTime, this.sun[0].endTime)
         } else if (week == 1) {
           str = '星期一'
-          this.myTime(this.mon[0].startTime,this.mon[0].endTime)
+          this.myTime(this.mon[0].startTime, this.mon[0].endTime)
         } else if (week == 2) {
           str = '星期二'
-          this.myTime(this.tue[0].startTime,this.tue[0].endTime)
+          this.myTime(this.tue[0].startTime, this.tue[0].endTime)
         } else if (week == 3) {
           str = '星期三'
-          this.myTime(this.wed[0].startTime,this.wed[0].endTime)
+          this.myTime(this.wed[0].startTime, this.wed[0].endTime)
         } else if (week == 4) {
           str = '星期四'
-          this.myTime(this.thu[0].startTime,this.thu[0].endTime)
+          this.myTime(this.thu[0].startTime, this.thu[0].endTime)
         } else if (week == 5) {
           str = '星期五'
-          this.myTime(this.fri[0].startTime,this.fri[0].endTime)
+          this.myTime(this.fri[0].startTime, this.fri[0].endTime)
         } else if (week == 6) {
           str = '星期六'
-          this.myTime(this.sat[0].startTime,this.sat[0].endTime)
+          this.myTime(this.sat[0].startTime, this.sat[0].endTime)
         }
         this.week = str
         return (str)
@@ -406,13 +442,13 @@
         }
       },
       sTime () {
-        console.log(this.s_time,this.e_time)
+        console.log(this.s_time, this.e_time)
         //this.checked_time[0] = '';
-        if(this.s_time > this.e_time){
+        if (this.s_time > this.e_time) {
           this.$message('开始时间不能大于结束时间')
 
         }
-        this.checked_time.shift();
+        this.checked_time.shift()
       },
       set_data () {
         //console.log(this.s_time,this.e_time,this.checked_time)
@@ -434,7 +470,7 @@
           }
         }).then((res) => {
           if (res.data.statusCode == 1001) {
-            this.$message('设置成功');
+            this.$message('设置成功')
             //this.initTime();
           } else {
             this.$message('设置失败')
@@ -473,31 +509,31 @@
         // })
 
         //websock
-        let arr = [{'channel':'0', 'value': '1'}];
-        let date = this.getNowFormatDate();
-        let enReqData = Aes.encrypt('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"71","devID":"' + this.devID + '","array":' + JSON.stringify(arr)+ '}',this.key);
-        console.log(JSON.parse('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"71","array":' + JSON.stringify(arr)+ '}',this.key));
-        let agentData = '{"notify":{"type":"104","token":"' + this.token + '", "data":"' + enReqData + '","time":"' + date + '"}}';
+        let arr = [{'channel': '0', 'value': '1'}]
+        let date = this.getNowFormatDate()
+        let enReqData = Aes.encrypt('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"71","devID":"' + this.devID + '","array":' + JSON.stringify(arr) + '}', this.key)
+        console.log(JSON.parse('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"71","array":' + JSON.stringify(arr) + '}', this.key))
+        let agentData = '{"notify":{"type":"104","token":"' + this.token + '", "data":"' + enReqData + '","time":"' + date + '"}}'
 
-        this.readyToSend(agentData);
+        this.readyToSend(agentData)
       },
       //控制模式
       change () {
         console.log(this.radio)
         //localStorage.setItem('mode',this.radio)
-        if(this.radio == 1){
-          this.flag = true;
-        }else if(this.radio == 0){
-          this.flag = false;
+        if (this.radio == 1) {
+          this.flag = true
+        } else if (this.radio == 0) {
+          this.flag = false
         }
         //websock
-        let arr = [{'channel':'0', 'value': this.radio}];
-        let date = this.getNowFormatDate();
-        let enReqData = Aes.encrypt('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"65","devID":"' + this.devID + '","array":' + JSON.stringify(arr)+ '}',this.key);
-        console.log(JSON.parse('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"65","array":' + JSON.stringify(arr)+ '}',this.key));
-        let agentData = '{"notify":{"type":"104","token":"' + this.token + '", "data":"' + enReqData + '","time":"' + date + '"}}';
+        let arr = [{'channel': '0', 'value': this.radio}]
+        let date = this.getNowFormatDate()
+        let enReqData = Aes.encrypt('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"65","devID":"' + this.devID + '","array":' + JSON.stringify(arr) + '}', this.key)
+        console.log(JSON.parse('{"userID":"' + localStorage.userID + '","devType":"2","comNumID":"65","array":' + JSON.stringify(arr) + '}', this.key))
+        let agentData = '{"notify":{"type":"104","token":"' + this.token + '", "data":"' + enReqData + '","time":"' + date + '"}}'
 
-        this.readyToSend(agentData);
+        this.readyToSend(agentData)
         // this.$axios({
         //   method: 'get',
         //   url: 'iotcp/xiangxun/set',
@@ -518,64 +554,40 @@
         // })
       },
 
+      //设置间隔时间
       setPeriod () {
-        console.log(this.min)
-        // if(this.min > 1440 || this.min < 0){
-        //   this.$message('间隔时间范围为0至1440分钟')
-        // }
-        let min = this.fomat_date(this.min1)
-        console.log(min)
-        let arr = min.split(':')
-        console.log(arr)
-        let min1 = parseInt(arr[0] * 60) + parseInt(arr[1])
-        console.log(min1)
-        this.min = min1;
-        this.$axios({
-          method: 'get',
-          url: 'iotcp/xiangxun/set',
-          params: {
-            type: '2',
-            value: min1,
-            devID: this.devID,
-            key: localStorage.getItem('key'),
-            token: localStorage.getItem('token'),
-            loginName: localStorage.getItem('loginName'),
-          }
-        }).then((res) => {
-          if (res.data.statusCode == 1001) {
-            this.$message('设置成功')
+        let reg = '^[0-9]*[1-9][0-9]*$'
+        if (this.min.match(reg)) {
+          if (this.min !== '') {
+            if (this.min > 1440 || this.min < 1) {
+              this.$message('间隔时间范围为0至1440分钟')
+            } else {
+              this.$axios({
+                method: 'get',
+                url: 'iotcp/xiangxun/set',
+                params: {
+                  type: '2',
+                  value: this.min,
+                  devID: this.devID,
+                  key: localStorage.getItem('key'),
+                  token: localStorage.getItem('token'),
+                  loginName: localStorage.getItem('loginName'),
+                }
+              }).then((res) => {
+                if (res.data.statusCode == 1001) {
+                  this.$message('设置成功')
+                } else {
+                  this.$message('设置失败')
+                }
+              })
+            }
           } else {
-            this.$message('设置失败')
+            this.$message('请输入间隔时间！')
           }
-        })
-      },
-      setLong () {
-        let sec = this.fomat_date1(this.sec1)
-        console.log(sec)
-        let arr = sec.split(':')
-        console.log(arr)
-        let sec1 = parseInt(arr[0] * 60) + parseInt(arr[1])
-        console.log(sec1)
-        this.sec = sec1;
-        this.$axios({
-          method: 'get',
-          url: 'iotcp/xiangxun/set',
-          params: {
-            type: '1',
-            value: sec1,
-            devID: this.devID,
-            key: localStorage.getItem('key'),
-            token: localStorage.getItem('token'),
-            loginName: localStorage.getItem('loginName'),
-          }
-        }).then((res) => {
-          if (res.data.statusCode == 1001) {
-            this.$message('设置成功')
-          } else {
-            this.$message('设置失败')
-          }
-        })
-
+        } else {
+          this.min = ''
+          this.$message('请输入正整数！')
+        }
       },
       setMin () {
         console.log(this.min)
@@ -607,7 +619,7 @@
         })
       },
       set_sec () {
-        let sec;
+        let sec
         if (this.sec == '半小时') {
           sec = 1800
         } else if (this.sec == '1小时') {
@@ -636,101 +648,104 @@
         })
       },
 
-
       //每隔一定时间发送数据
-      time() {
-            //console.log(new Date().getSeconds());
-        if (!this.loopFlag) return;//false_停止轮询
+      time () {
+        //console.log(new Date().getSeconds());
+        if (!this.loopFlag) {
+          return
+        }//false_停止轮询
         else {//正在loading，延迟  递归
           if (this.realtimeLoading && this && !this._isDestroyed) {
-            setTimeout(this.time, 20000);
+            setTimeout(this.time, 20000)
 
           } else {//
-            if (this.websock && this.curTurn === 0)
-              this.threadPoxi();//发送消息
-            if (this && !this._isDestroyed)
-              setTimeout(this.time, 10000);
+            if (this.websock && this.curTurn === 0) {
+              this.threadPoxi()
+            }//发送消息
+            if (this && !this._isDestroyed) {
+              setTimeout(this.time, 10000)
+            }
           }
         }
 
       },
-      getNowFormatDate(val) {
-        let date = val?val:new Date();
+      getNowFormatDate (val) {
+        let date = val ? val : new Date()
 
-        let month = date.getMonth() + 1;
-        let day = date.getDate();
-        let hour = date.getHours();
-        let minutes = date.getMinutes();
-        let seconds = date.getSeconds();
+        let month = date.getMonth() + 1
+        let day = date.getDate()
+        let hour = date.getHours()
+        let minutes = date.getMinutes()
+        let seconds = date.getSeconds()
         return date.getFullYear() + '-' + this.formatDate(month) + '-' + this.formatDate(day)
-          + " " + this.formatDate(hour) + ":" + this.formatDate(minutes) + ":" + this.formatDate(seconds);
+          + ' ' + this.formatDate(hour) + ':' + this.formatDate(minutes) + ':' + this.formatDate(seconds)
       },
-      formatDate(val){
-        return (val >= 0 && val <= 9)?("0"+val):val;
+      formatDate (val) {
+        return (val >= 0 && val <= 9) ? ('0' + val) : val
       },
       //   websocket获取变量数据
 
       //准备数据发送消息
-      threadPoxi() {
+      threadPoxi () {
         //console.log(this.token)
-        let arr = [{'tagName':'0d4738323134373000bc9b2c113d90cd_2_289_XXControlMode_0'},{'tagName':'0d4738323134373000bc9b2c113d90cd_2_290_XXSwitch_0'},{'tagName':'0d4738323134373000bc9b2c113d90cd_2_293_XXAlarm_0'}];
-        let date = this.getNowFormatDate();
-        let enReqData = Aes.encrypt('{"userID":"' + localStorage.userID + '","array":' + JSON.stringify(arr)+ '}',this.key);
+        let arr = [{'tagName': '0d4738323134373000bc9b2c113d90cd_2_289_XXControlMode_0'}, {'tagName': '0d4738323134373000bc9b2c113d90cd_2_290_XXSwitch_0'}, {'tagName': '0d4738323134373000bc9b2c113d90cd_2_293_XXAlarm_0'}]
+        let date = this.getNowFormatDate()
+        let enReqData = Aes.encrypt('{"userID":"' + localStorage.userID + '","array":' + JSON.stringify(arr) + '}', this.key)
         //console.log(arr);
-        let agentData = '{"notify":{"type":"102","token":"' + this.token + '", "data":"' + enReqData + '","time":"' + date + '"}}';
+        let agentData = '{"notify":{"type":"102","token":"' + this.token + '", "data":"' + enReqData + '","time":"' + date + '"}}'
         //console.log(this.websock.readyState);
         //console.log('agentData',agentData);
-        this.readyToSend(agentData);
+        this.readyToSend(agentData)
       },
-      readyToSend(agentData) {
+      readyToSend (agentData) {
         if (this.websock.readyState === 1) {//连接状态中
           console.log('可以发送')
-          this.websocketsend(agentData);
+          this.websocketsend(agentData)
         } else {
-          this.readyToSend(agentData);
+          this.readyToSend(agentData)
         }
       },
       //初始化weosocket
-      initWebSocket() {
+      initWebSocket () {
         //console.log(localStorage.getItem('websocketTip'));
-        let wsuri = localStorage.getItem('websocketUrl');
+        let wsuri = localStorage.getItem('websocketUrl')
         try {
-          this.websock = new WebSocket(wsuri);
+          this.websock = new WebSocket(wsuri)
 
           //console.log(this.websock.readyState);
         } catch (err) {
 
-         // console.log(this.websock.readyState);
+          // console.log(this.websock.readyState);
           console.log(err)
         }
-        this.websock.onopen = this.websocketopen;
-        this.websock.onmessage = this.websocketonmessage;
-        this.websock.onclose = this.websocketclose;
-        this.websock.onerror = this.websocketerror;
+        this.websock.onopen = this.websocketopen
+        this.websock.onmessage = this.websocketonmessage
+        this.websock.onclose = this.websocketclose
+        this.websock.onerror = this.websocketerror
       },
       //开启连接
-      websocketopen(e) {
-        console.log("connection opened ");
-        this.threadPoxi();
+      websocketopen (e) {
+        console.log('connection opened ')
+        this.threadPoxi()
       },
       //连接失败
-      websocketerror(e) {
-        let _this = this;
-        console.log("connection error ");
+      websocketerror (e) {
+        let _this = this
+        console.log('connection error ')
         //this.$message.error('连接失败，正在重试');
         setTimeout(() => {
-          _this.initWebSocket();
-        }, 10000);
+          _this.initWebSocket()
+        }, 10000)
 
       },
       //数据发送  agentData
-      websocketsend(agentData) {
-        console.log('啦啦啦', agentData.length);
+      websocketsend (agentData) {
+        console.log('啦啦啦', agentData.length)
         console.log('——发送start——', this.getNowFormatDate())
         if (this.websock.readyState === 1) {
           console.log('正在发送')
           try {
-            this.websock.send(agentData);
+            this.websock.send(agentData)
           } catch (err) {
             // this.$message.error(err.toString());
           }
@@ -738,53 +753,52 @@
 
       },
       //关闭连接
-      websocketclose(e) {
-        console.log(this.websock.readyState);
-        console.log("connection closed ");
+      websocketclose (e) {
+        console.log(this.websock.readyState)
+        console.log('connection closed ')
       },
 
       //数据接收
-      websocketonmessage(e) {
-        console.log('——返回end——', this.getNowFormatDate());
+      websocketonmessage (e) {
+        console.log('——返回end——', this.getNowFormatDate())
         //console.log(e.data)
 //         const patt1 = new RegExp(/\s+/g);
 //         const patt2 = new RegExp(/[\r\n]/g);
-         console.log("返回数据",e.data);
-         let redata = JSON.parse(e.data);
-         //console.log(redata)
+        console.log('返回数据', e.data)
+        let redata = JSON.parse(e.data)
+        //console.log(redata)
         if (typeof (redata.notify.ErrorCode) === 'undefined') {
 
-          let deResData = Aes.decrypt(redata.notify.data, this.key); //解密
+          let deResData = Aes.decrypt(redata.notify.data, this.key) //解密
           console.log(JSON.parse(deResData))
-          let arr = JSON.parse(deResData);
-          let resArr = arr.array;
-          resArr.forEach((item)=>{
-            if(item.tagName == "0d4738323134373000bc9b2c113d90cd_2_289_XXControlMode_0"){
-              this.radio = item.value;
+          let arr = JSON.parse(deResData)
+          let resArr = arr.array
+          resArr.forEach((item) => {
+            if (item.tagName == '0d4738323134373000bc9b2c113d90cd_2_289_XXControlMode_0') {
+              this.radio = item.value
               //自动模式 开关禁用
               //console.log(this.flag)
-              if(item.value == 1){//自动
-                this.flag = true;
-              }else if(item.value == 0){//手动
-                this.flag = false;
+              if (item.value == 1) {//自动
+                this.flag = true
+              } else if (item.value == 0) {//手动
+                this.flag = false
               }
             }
-            if(item.tagName == "0d4738323134373000bc9b2c113d90cd_2_293_XXAlarm_0"){
-              if(item.value == 1){//警报响起
-                this.warn_flag = true;
-              }else if(item.value == 0){//没有警报
+            if (item.tagName == '0d4738323134373000bc9b2c113d90cd_2_293_XXAlarm_0') {
+              if (item.value == 1) {//警报响起
+                this.warn_flag = true
+              } else if (item.value == 0) {//没有警报
                 //清除按钮不能点击
-                  this.clearFlag = true;
+                this.clearFlag = true
               }
             }
 
-
-            if(item.tagName == "0d4738323134373000bc9b2c113d90cd_2_290_XXSwitch_0"){
+            if (item.tagName == '0d4738323134373000bc9b2c113d90cd_2_290_XXSwitch_0') {
               //开关
-              if(item.value == 1){//开启
-                this.value = true;
-              }else if(item.value == 0){//关闭
-                this.value = false;
+              if (item.value == 1) {//开启
+                this.value = true
+              } else if (item.value == 0) {//关闭
+                this.value = false
               }
 
             }
@@ -794,23 +808,22 @@
 
           //token失效，跳转登陆页
           if (redata.notify.ErrorCode === '9003') {
-            this.loopFlag = false;//停止轮询
-            this.realtimeLoading = false;
+            this.loopFlag = false//停止轮询
+            this.realtimeLoading = false
             // this.$message.error('token失效！');
-            this.$router.replace({name: 'login'});
+            this.$router.replace({name: 'login'})
           } else {
             //其他错误还是照旧轮询发消息取实时数据
-            this.realtimeLoading = false;//不为true，否则轮询不发消息
-            this.$forceUpdate();
-            this.loadings[this.curIndex] = 1;
-            this.curIndex = -1;
+            this.realtimeLoading = false//不为true，否则轮询不发消息
+            this.$forceUpdate()
+            this.loadings[this.curIndex] = 1
+            this.curIndex = -1
             if (redata.notify.ErrorCode === '9010') {
-              console.log('——返回数据超时——', redata.notify.ErrorCode);
+              console.log('——返回数据超时——', redata.notify.ErrorCode)
               //this.$message.error('返回数据超时！正在重新加载！');
             } else if (redata.notify.ErrorCode === '9008') {
-              console.log('报文格式错误！正在重新加载！');
+              console.log('报文格式错误！正在重新加载！')
             }
-
 
           }
         }
@@ -820,10 +833,11 @@
     },
     destroyed: function () {
       //页面销毁时关闭长连接
-      console.log('destroy');
-      this.loopFlag = false;//停止轮询
-      if (this.websock)
-        this.websock.close();//关闭连接
+      console.log('destroy')
+      this.loopFlag = false//停止轮询
+      if (this.websock) {
+        this.websock.close()
+      }//关闭连接
 
     },
   }
@@ -834,16 +848,16 @@
 
   .con {
     border: solid 1px #3b3b3b;
-    height: auto;
+    height: 700px;
     overflow: hidden;
     margin-top: 70px;
     color: #714f2a;
     background-color: rgba(59, 59, 59, 0.5);
-    padding: 0 70px 65px;
+    padding: 0 70px;
     width: 43%;
     float: right;
     margin-right: 5%;
-
+    margin-bottom: 50px;
   }
 
   .title1 {
@@ -864,10 +878,20 @@
   .start, .end {
     display: inline-block;
     margin-top: 20px;
+    width: 44%;
   }
 
   .el-date-editor.el-input, .el-date-editor.el-input__inner {
-    width: 360px;
+    width: 100%;
+  }
+
+  @media (max-width: 1600px) {
+
+
+    .btn1 {
+      height: 40px !important;
+    }
+
   }
 
   .sel {
@@ -875,9 +899,12 @@
     /*width: 98%;*/
   }
 
+  .start, .end{
+    width: 42%;
+  }
   .to {
     display: inline-block;
-    margin: 0 30px;
+    margin: 0 5%;
   }
 
   .left {
@@ -891,7 +918,7 @@
     margin-right: -3px;
   }
 
-  .btn {
+  .btn1 {
     width: 16%;
     height: 44px;
     border-radius: 0;
@@ -900,6 +927,7 @@
     border-color: #151515;
     font-size: 16px;
     float: left;
+    margin-left: -2%;
   }
 
   .min, .sec {
@@ -925,7 +953,7 @@
 
   .min span, .sec span {
     position: absolute;
-    right: 40px;
+    right: 10px;
     font-size: 14px;
     color: #c49c6e;
     top: 10px;
